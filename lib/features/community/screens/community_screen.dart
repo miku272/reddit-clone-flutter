@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:routemaster/routemaster.dart';
 
 import '../controller/community_controller.dart';
 
@@ -15,6 +16,10 @@ class CommunityScreen extends ConsumerWidget {
     required this.name,
     super.key,
   });
+
+  void navigateToModTools(BuildContext context) {
+    Routemaster.of(context).push('/mod-tools');
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -66,9 +71,7 @@ class CommunityScreen extends ConsumerWidget {
                                 ),
                                 OutlinedButton(
                                   onPressed: community.mods.contains(uid)
-                                      ? () {
-                                          debugPrint('Moderator');
-                                        }
+                                      ? () => navigateToModTools(context)
                                       : () {
                                           debugPrint('Not a member');
                                         },
