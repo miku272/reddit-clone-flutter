@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:routemaster/routemaster.dart';
 
 class ModToolsScreen extends StatelessWidget {
-  const ModToolsScreen({super.key});
+  final String name;
+
+  const ModToolsScreen({required this.name, super.key});
+
+  void navigateToEditCommunity(BuildContext context) {
+    Routemaster.of(context).push('/edit-community/$name');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +24,7 @@ class ModToolsScreen extends StatelessWidget {
             title: const Text('Add moderators'),
           ),
           ListTile(
-            onTap: () {},
+            onTap: () => navigateToEditCommunity(context),
             leading: const Icon(Icons.edit),
             title: const Text('Edit community'),
           ),

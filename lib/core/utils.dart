@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 
 void showSnackbar(BuildContext context, String message) {
   ScaffoldMessenger.of(context)
@@ -10,4 +11,10 @@ void showSnackbar(BuildContext context, String message) {
         ),
       ),
     );
+}
+
+Future<FilePickerResult?> pickImage() async {
+  final image = await FilePicker.platform.pickFiles(type: FileType.image);
+
+  return image;
 }

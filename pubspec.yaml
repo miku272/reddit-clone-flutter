@@ -41,8 +41,10 @@ dependencies:
   firebase_auth: ^4.4.2
   google_sign_in: ^6.1.0
   flutter_riverpod: ^2.3.5
-  fpdart: ^0.5.0
+  fpdart: ^0.6.0
   routemaster: ^1.0.1
+  dotted_border: ^2.0.0+3
+  file_picker: ^5.3.0
 
 dev_dependencies:
   flutter_test:
