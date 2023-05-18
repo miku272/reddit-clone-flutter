@@ -7,6 +7,8 @@ import '../../../models/user_model.dart';
 
 import '../drawers/community_list_drawer.dart';
 
+import '../delegates/search_community_delegate.dart';
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -21,7 +23,12 @@ class HomeScreen extends ConsumerWidget {
         centerTitle: false,
         actions: <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: SearchCommunityDelegate(ref: ref),
+              );
+            },
             icon: const Icon(Icons.search),
           ),
           IconButton(
