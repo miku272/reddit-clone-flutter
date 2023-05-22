@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:routemaster/routemaster.dart';
+import 'package:fpdart/fpdart.dart';
 
 import '../../../core/providers/storage_repository_provider.dart';
+import '../../../core/failure.dart';
 
 import '../repository/community_repository.dart';
 
@@ -86,6 +88,37 @@ class CommunityController extends StateNotifier<bool> {
       },
     );
   }
+
+  Future<void> joinOrLeaveCommunity(
+      Community community, BuildContext context) async {
+    final user = _ref.read(userProvider);
+
+    Either<Failure, void> res;
+
+    if (user != null) {
+      if (community.members.contains(user.uid)) {
+        res = await _communityRepository.leaveCommunity(
+          community.name,
+          user.uid,
+        );
+      } else {
+        res = await _communityRepository.joinCommunity(
+          community.name,
+          user.uid,
+        );
+      }
+
+      res.fold((l) => showSnackbar(context, l.message), (r) {
+        if (community.members.contains(user.uid)) {
+          showSnackbar(context, 'Community left');
+        } else {
+          showSnackbar(context, 'Community joined!');
+        }
+      });
+    }
+  }
+
+  Future<void> leaveCommunity() async {}
 
   Future<void> editCommunity({
     required BuildContext context,

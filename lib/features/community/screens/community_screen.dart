@@ -7,6 +7,8 @@ import '../controller/community_controller.dart';
 import '../../../core/common/loader.dart';
 import '../../../core/common/error_text.dart';
 
+import '../../../models/community_model.dart';
+
 import '../../auth/controller/auth_controller.dart';
 
 class CommunityScreen extends ConsumerWidget {
@@ -19,6 +21,17 @@ class CommunityScreen extends ConsumerWidget {
 
   void navigateToModTools(BuildContext context) {
     Routemaster.of(context).push('/mod-tools/$name');
+  }
+
+  Future<void> joinOrLeaveCommunity(
+    WidgetRef ref,
+    BuildContext context,
+    Community community,
+  ) async {
+    await ref.read(communityControllerProvider.notifier).joinOrLeaveCommunity(
+          community,
+          context,
+        );
   }
 
   @override
@@ -72,8 +85,12 @@ class CommunityScreen extends ConsumerWidget {
                                 OutlinedButton(
                                   onPressed: community.mods.contains(uid)
                                       ? () => navigateToModTools(context)
-                                      : () {
-                                          debugPrint('Not a member');
+                                      : () async {
+                                          await joinOrLeaveCommunity(
+                                            ref,
+                                            context,
+                                            community,
+                                          );
                                         },
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(

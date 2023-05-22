@@ -6,11 +6,16 @@ import '../../auth/controller/auth_controller.dart';
 import '../../../models/user_model.dart';
 
 import '../drawers/community_list_drawer.dart';
+import '../drawers/profile_drawer.dart';
 
 import '../delegates/search_community_delegate.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
+
+  void displayEndDrawer(BuildContext context) {
+    Scaffold.of(context).openEndDrawer();
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,6 +23,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       drawer: const CommunityListDrawer(),
+      endDrawer: const ProfileDrawer(),
       appBar: AppBar(
         title: const Text('Home'),
         centerTitle: false,
@@ -31,13 +37,15 @@ class HomeScreen extends ConsumerWidget {
             },
             icon: const Icon(Icons.search),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: CircleAvatar(
-              backgroundImage:
-                  user != null ? NetworkImage(user.profilePic) : null,
-            ),
-          ),
+          Builder(builder: (context) {
+            return IconButton(
+              onPressed: () => displayEndDrawer(context),
+              icon: CircleAvatar(
+                backgroundImage:
+                    user != null ? NetworkImage(user.profilePic) : null,
+              ),
+            );
+          }),
         ],
       ),
       body: Center(
