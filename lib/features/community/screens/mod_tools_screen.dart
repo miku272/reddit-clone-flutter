@@ -6,6 +6,10 @@ class ModToolsScreen extends StatelessWidget {
 
   const ModToolsScreen({required this.name, super.key});
 
+  void navigateToAddMods(BuildContext context) {
+    Routemaster.of(context).push('/add-mods/$name');
+  }
+
   void navigateToEditCommunity(BuildContext context) {
     Routemaster.of(context).push('/edit-community/$name');
   }
@@ -19,7 +23,7 @@ class ModToolsScreen extends StatelessWidget {
       body: Column(
         children: <Widget>[
           ListTile(
-            onTap: () {},
+            onTap: () => navigateToAddMods(context),
             leading: const Icon(Icons.add_moderator),
             title: const Text('Add moderators'),
           ),

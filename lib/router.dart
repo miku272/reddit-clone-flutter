@@ -9,6 +9,7 @@ import './features/community/screens/create_community.dart';
 import './features/community/screens/community_screen.dart';
 import './features/community/screens/mod_tools_screen.dart';
 import './features/community/screens/edit_community_screen.dart';
+import './features/community/screens/add_mods_screen.dart';
 
 final loggedOutRoute = RouteMap(routes: {
   '/': (routeData) => const MaterialPage(child: LoginScreen()),
@@ -32,6 +33,11 @@ final loggedInRoute = RouteMap(
         ),
     '/edit-community/:name': (routeData) => MaterialPage(
           child: EditCommunityScreen(
+            name: routeData.pathParameters['name']!,
+          ),
+        ),
+    '/add-mods/:name': (routeData) => MaterialPage(
+          child: AddModsScreen(
             name: routeData.pathParameters['name']!,
           ),
         ),

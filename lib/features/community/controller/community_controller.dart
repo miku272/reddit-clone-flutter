@@ -37,7 +37,8 @@ final communityControllerProvider =
   },
 );
 
-final getCommunityByNameProvider = StreamProvider.family((ref, String name) {
+final getCommunityByNameProvider =
+    StreamProvider.autoDispose.family((ref, String name) {
   final communityController = ref.watch(communityControllerProvider.notifier);
 
   return communityController.getCommunityByName(name);
@@ -162,6 +163,16 @@ class CommunityController extends StateNotifier<bool> {
     );
 
     state = false;
+  }
+
+  Future<void> updateMods(
+      BuildContext context, String communityName, List<String> uids) async {
+    final res = await _communityRepository.updateMods(communityName, uids);
+
+    res.fold(
+      (l) => showSnackbar(context, l.message),
+      (r) => Routemaster.of(context).pop(),
+    );
   }
 
   Stream<List<Community>> getUserCommunities() {

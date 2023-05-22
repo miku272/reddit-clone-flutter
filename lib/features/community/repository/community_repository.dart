@@ -92,6 +92,20 @@ class CommunityRepository {
     }
   }
 
+  FutureVoid updateMods(String communityName, List<String> uids) async {
+    try {
+      return right(
+        _communities.doc(communityName).update({
+          'mods': uids,
+        }),
+      );
+    } on FirebaseException catch (error) {
+      throw error.message!;
+    } catch (error) {
+      return left(Failure(error.toString()));
+    }
+  }
+
   Stream<Community> getCommunityByName(String name) {
     return _communities.doc(name).snapshots().map(
           (event) => Community.fromMap(event.data() as Map<String, dynamic>),
