@@ -119,8 +119,6 @@ class CommunityController extends StateNotifier<bool> {
     }
   }
 
-  Future<void> leaveCommunity() async {}
-
   Future<void> editCommunity({
     required BuildContext context,
     required Community community,
