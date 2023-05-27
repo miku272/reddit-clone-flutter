@@ -14,6 +14,8 @@ import './features/community/screens/add_mods_screen.dart';
 import './features/user_profile/screens/user_profile_screen.dart';
 import './features/user_profile/screens/edit_profile_screen.dart';
 
+import './features/post/screens/add_post_type_screen.dart';
+
 final loggedOutRoute = RouteMap(routes: {
   '/': (routeData) => const MaterialPage(child: LoginScreen()),
 });
@@ -52,6 +54,11 @@ final loggedInRoute = RouteMap(
     '/edit-profile/:uid': (routeData) => MaterialPage(
           child: EditProfileScreen(
             uid: routeData.pathParameters['uid']!,
+          ),
+        ),
+    '/add-post/:type': (routeData) => MaterialPage(
+          child: AddPostTypeScreen(
+            type: routeData.pathParameters['type']!,
           ),
         ),
   },
