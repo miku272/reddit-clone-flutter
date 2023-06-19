@@ -150,7 +150,7 @@ class PostController extends StateNotifier<bool> {
         upvotes: [],
         downvotes: [],
         commentCount: 0,
-        postType: 'link',
+        postType: 'image',
         createdAt: DateTime.now(),
         awards: [],
       );
