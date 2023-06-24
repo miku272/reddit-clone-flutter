@@ -166,6 +166,27 @@ class PostController extends StateNotifier<bool> {
     });
   }
 
+  Future<void> deletePost(BuildContext context, Post post) async {
+    final res = await _postRepository.deletePost(post);
+
+    res.fold(
+      (l) => showSnackbar(context, l.message),
+      (r) => showSnackbar(context, 'Post deleted succesfully'),
+    );
+  }
+
+  Future<void> upvote(Post post) async {
+    final userId = _ref.read(userProvider)!.uid;
+
+    await _postRepository.upvote(post, userId);
+  }
+
+  Future<void> downvote(Post post) async {
+    final userId = _ref.read(userProvider)!.uid;
+
+    await _postRepository.downvote(post, userId);
+  }
+
   Stream<List<Post>> fetchUserPosts(List<Community> communities) {
     if (communities.isNotEmpty) {
       return _postRepository.fetchUserPosts(communities);
