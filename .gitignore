@@ -10,6 +10,7 @@
 .svn/
 migrate_working_dir/
 firebase_options.dart
+temp_animation_1.dart
 
 # IntelliJ related
 *.iml
