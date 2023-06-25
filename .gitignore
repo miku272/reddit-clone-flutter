@@ -11,6 +11,7 @@
 migrate_working_dir/
 firebase_options.dart
 temp_animation_1.dart
+temp_animation_2.dart
 
 # IntelliJ related
 *.iml

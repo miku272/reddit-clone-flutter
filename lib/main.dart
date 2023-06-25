@@ -18,6 +18,7 @@ import './models/user_model.dart';
 import './features/auth/controller/auth_controller.dart';
 
 // import './temp_animation_1.dart';
+import './temp_animation_2.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,35 +55,35 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ref.watch(authStateChangeProvider).when(
-          data: (data) => MaterialApp.router(
-            title: 'Reddit Clone',
-            debugShowCheckedModeBanner: false,
-            // theme: Pallete.darkModeAppTheme,
-            theme: ref.watch(themeNotifierProvider),
-            // home: const LoginScreen(),
-            routerDelegate: RoutemasterDelegate(
-              routesBuilder: (context) {
-                if (data != null) {
-                  getData(ref, data);
+    // return ref.watch(authStateChangeProvider).when(
+    //       data: (data) => MaterialApp.router(
+    //         title: 'Reddit Clone',
+    //         debugShowCheckedModeBanner: false,
+    //         // theme: Pallete.darkModeAppTheme,
+    //         theme: ref.watch(themeNotifierProvider),
+    //         // home: const LoginScreen(),
+    //         routerDelegate: RoutemasterDelegate(
+    //           routesBuilder: (context) {
+    //             if (data != null) {
+    //               getData(ref, data);
 
-                  if (userModel != null) {
-                    return loggedInRoute;
-                  }
-                }
-                return loggedOutRoute;
-              },
-            ),
-            routeInformationParser: const RoutemasterParser(),
-          ),
-          error: (error, stackTrace) => ErrorText(error: error.toString()),
-          loading: () => const Loader(),
-        );
-    // return const MaterialApp(
-    //   title: 'FLutter animation',
-    //   debugShowCheckedModeBanner: false,
-    //   debugShowMaterialGrid: false,
-    //   home: TempAnimation1(),
-    // );
+    //               if (userModel != null) {
+    //                 return loggedInRoute;
+    //               }
+    //             }
+    //             return loggedOutRoute;
+    //           },
+    //         ),
+    //         routeInformationParser: const RoutemasterParser(),
+    //       ),
+    //       error: (error, stackTrace) => ErrorText(error: error.toString()),
+    //       loading: () => const Loader(),
+    //     );
+    return const MaterialApp(
+      title: 'FLutter animation',
+      debugShowCheckedModeBanner: false,
+      debugShowMaterialGrid: false,
+      home: TempAnimation2(),
+    );
   }
 }
