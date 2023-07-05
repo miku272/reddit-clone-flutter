@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:routemaster/routemaster.dart';
 import 'package:any_link_preview/any_link_preview.dart';
 
+import './loader.dart';
+import 'error_text.dart';
 import '../constants/constants.dart';
 
 import '../../features/auth/controller/auth_controller.dart';
+import '../../features/community/controller/community_controller.dart';
 import '../../features/post/controllers/post_controller.dart';
 
 import '../../theme/pallete.dart';
@@ -26,6 +30,14 @@ class PostCard extends ConsumerWidget {
 
   Future<void> downvote(WidgetRef ref) async {
     await ref.read(postControllerProvider.notifier).downvote(post);
+  }
+
+  void navigateToUserProfile(BuildContext context) {
+    Routemaster.of(context).push('/u/${post.userId}');
+  }
+
+  void navigateToCommunity(BuildContext context) {
+    Routemaster.of(context).push('/r/${post.communityName}');
   }
 
   @override
@@ -62,11 +74,14 @@ class PostCard extends ConsumerWidget {
                             children: <Widget>[
                               Row(
                                 children: <Widget>[
-                                  CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                      post.communityProfilePic,
+                                  GestureDetector(
+                                    onTap: () => navigateToCommunity(context),
+                                    child: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                        post.communityProfilePic,
+                                      ),
+                                      radius: 16.0,
                                     ),
-                                    radius: 16.0,
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 15.0),
@@ -74,18 +89,26 @@ class PostCard extends ConsumerWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
-                                        Text(
-                                          'r/${post.communityName}',
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
+                                        GestureDetector(
+                                          onTap: () =>
+                                              navigateToCommunity(context),
+                                          child: Text(
+                                            'r/${post.communityName}',
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
-                                        Text(
-                                          'u/${post.userName}',
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
+                                        GestureDetector(
+                                          onTap: () =>
+                                              navigateToUserProfile(context),
+                                          child: Text(
+                                            'u/${post.userName}',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -143,6 +166,7 @@ class PostCard extends ConsumerWidget {
                               ),
                             ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Row(
                                 children: <Widget>[
@@ -186,6 +210,33 @@ class PostCard extends ConsumerWidget {
                                   ),
                                 ],
                               ),
+                              ref
+                                  .watch(
+                                    getCommunityByNameProvider(
+                                      post.communityName,
+                                    ),
+                                  )
+                                  .when(
+                                    loading: () => const Loader(),
+                                    error: (error, stacktrace) => ErrorText(
+                                      error: error.toString(),
+                                    ),
+                                    data: (community) {
+                                      if (community.mods.contains(user.uid)) {
+                                        return IconButton(
+                                          onPressed: () => deletePost(
+                                            ref,
+                                            context,
+                                          ),
+                                          icon: const Icon(
+                                            Icons.admin_panel_settings,
+                                          ),
+                                        );
+                                      }
+
+                                      return const SizedBox();
+                                    },
+                                  ),
                             ],
                           ),
                         ],
