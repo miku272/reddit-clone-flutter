@@ -9,6 +9,7 @@ import '../../../core/type_defs.dart';
 import '../../../core/providers/firebase_providers.dart';
 
 import '../../../models/user_model.dart';
+import '../../../models/post_model.dart';
 
 final userProfileRepositoryProvider = Provider(
   (ref) => UserProfileRepository(firestore: ref.watch(firestoreProvider)),
@@ -24,6 +25,10 @@ class UserProfileRepository {
         FirebaseConstants.userCollection,
       );
 
+  CollectionReference get _posts => _firestore.collection(
+        FirebaseConstants.postsCollection,
+      );
+
   FutureVoid editProfile(UserModel user) async {
     try {
       return right(_users.doc(user.uid).update(user.toMap()));
@@ -32,5 +37,19 @@ class UserProfileRepository {
     } catch (error) {
       return left(Failure(error.toString()));
     }
+  }
+
+  Stream<List<Post>> getUserPost(String uid) {
+    return _posts
+        .where('userId', isEqualTo: uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (event) => event.docs
+              .map(
+                (post) => Post.fromMap(post.data() as Map<String, dynamic>),
+              )
+              .toList(),
+        );
   }
 }

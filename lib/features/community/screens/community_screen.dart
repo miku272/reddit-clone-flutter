@@ -6,6 +6,7 @@ import '../controller/community_controller.dart';
 
 import '../../../core/common/loader.dart';
 import '../../../core/common/error_text.dart';
+import '../../../core/common/post_card.dart';
 
 import '../../../models/community_model.dart';
 
@@ -122,7 +123,20 @@ class CommunityScreen extends ConsumerWidget {
                     ),
                   ];
                 },
-                body: Container(),
+                body: ref.watch(getCommunityPostsProvider(community.id)).when(
+                      loading: () => const Loader(),
+                      error: (error, stacktrace) => ErrorText(
+                        error: error.toString(),
+                      ),
+                      data: (posts) {
+                        return ListView.builder(
+                          itemCount: posts.length,
+                          itemBuilder: (context, index) {
+                            return PostCard(post: posts[index]);
+                          },
+                        );
+                      },
+                    ),
               );
             },
             error: (error, stacktrace) => ErrorText(error: error.toString()),

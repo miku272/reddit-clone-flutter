@@ -9,6 +9,7 @@ import '../repository/user_profile_repository.dart';
 import '../../auth/controller/auth_controller.dart';
 
 import '../../../models/user_model.dart';
+import '../../../models/post_model.dart';
 
 import '../../../core/utils.dart';
 import '../../../core/providers/storage_repository_provider.dart';
@@ -26,6 +27,13 @@ final userProfileControllerProvider =
     );
   },
 );
+
+final getUserPostsProvider = StreamProvider.family((ref, String uid) {
+  final userProfileController =
+      ref.watch(userProfileControllerProvider.notifier);
+
+  return userProfileController.getUserPosts(uid);
+});
 
 class UserProfileController extends StateNotifier<bool> {
   final UserProfileRepository _userProfileRepository;
@@ -95,5 +103,9 @@ class UserProfileController extends StateNotifier<bool> {
     );
 
     state = false;
+  }
+
+  Stream<List<Post>> getUserPosts(String uid) {
+    return _userProfileRepository.getUserPost(uid);
   }
 }
