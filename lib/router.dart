@@ -15,6 +15,7 @@ import './features/user_profile/screens/user_profile_screen.dart';
 import './features/user_profile/screens/edit_profile_screen.dart';
 
 import './features/post/screens/add_post_type_screen.dart';
+import './features/post/screens/comment_screen.dart';
 
 final loggedOutRoute = RouteMap(routes: {
   '/': (routeData) => const MaterialPage(child: LoginScreen()),
@@ -59,6 +60,11 @@ final loggedInRoute = RouteMap(
     '/add-post/:type': (routeData) => MaterialPage(
           child: AddPostTypeScreen(
             type: routeData.pathParameters['type']!,
+          ),
+        ),
+    '/post/:postId/comments': (routeData) => MaterialPage(
+          child: CommentScreen(
+            postId: routeData.pathParameters['postId']!,
           ),
         ),
   },

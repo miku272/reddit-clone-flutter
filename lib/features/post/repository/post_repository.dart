@@ -9,6 +9,7 @@ import '../../../core/failure.dart';
 
 import '../../../models/community_model.dart';
 import '../../../models/post_model.dart';
+import '../../../models/comment_model.dart';
 
 final postRepositoryProvider = Provider((ref) {
   return PostRepository(firestore: ref.watch(firestoreProvider));
@@ -22,6 +23,10 @@ class PostRepository {
 
   CollectionReference get _posts => _firestore.collection(
         FirebaseConstants.postsCollection,
+      );
+
+  CollectionReference get _comments => _firestore.collection(
+        FirebaseConstants.commentsCollection,
       );
 
   FutureVoid addPost(Post post) async {
@@ -97,5 +102,39 @@ class PostRepository {
               .map((e) => Post.fromMap(e.data() as Map<String, dynamic>))
               .toList(),
         );
+  }
+
+  Stream<Post> getPostById(String postId) {
+    return _posts
+        .doc(postId)
+        .snapshots()
+        .map((post) => Post.fromMap(post.data() as Map<String, dynamic>));
+  }
+
+  FutureVoid addComment(Comment comment) async {
+    try {
+      await _comments.doc(comment.commentId).set(comment.toMap());
+      return right(_posts.doc(comment.postId).update({
+        'commentCount': FieldValue.increment(1),
+      }));
+    } on FirebaseException catch (error) {
+      throw error.message!;
+    } catch (error) {
+      return left(Failure(error.toString()));
+    }
+  }
+
+  Stream<List<Comment>> getPostComments(String postId) {
+    return _comments
+        .where('postId', isEqualTo: postId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((event) => event.docs
+            .map(
+              (comment) => Comment.fromMap(
+                comment.data() as Map<String, dynamic>,
+              ),
+            )
+            .toList());
   }
 }
