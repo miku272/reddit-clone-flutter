@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../core/enums/enums.dart';
 import '../../../core/utils.dart';
 import '../../../core/providers/storage_repository_provider.dart';
 
@@ -15,6 +16,8 @@ import '../../../models/comment_model.dart';
 
 import '../../auth/controller/auth_controller.dart';
 import '../repository/post_repository.dart';
+
+import '../../user_profile/controller/user_profile_controller.dart';
 
 final postControllerProvider =
     StateNotifierProvider<PostController, bool>((ref) {
@@ -89,6 +92,9 @@ class PostController extends StateNotifier<bool> {
     );
 
     final res = await _postRepository.addPost(post);
+    _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+          UserKarma.textPost,
+        );
 
     state = false;
 
@@ -126,6 +132,9 @@ class PostController extends StateNotifier<bool> {
     );
 
     final res = await _postRepository.addPost(post);
+    _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+          UserKarma.linkPost,
+        );
 
     state = false;
 
@@ -169,6 +178,9 @@ class PostController extends StateNotifier<bool> {
       );
 
       final res = await _postRepository.addPost(post);
+      _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+            UserKarma.imagePost,
+          );
 
       state = false;
 
@@ -181,6 +193,9 @@ class PostController extends StateNotifier<bool> {
 
   Future<void> deletePost(BuildContext context, Post post) async {
     final res = await _postRepository.deletePost(post);
+    _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+          UserKarma.deletePost,
+        );
 
     res.fold(
       (l) => showSnackbar(context, l.message),
@@ -231,6 +246,9 @@ class PostController extends StateNotifier<bool> {
     );
 
     final res = await _postRepository.addComment(comment);
+    _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+          UserKarma.comment,
+        );
 
     res.fold(
       (l) => showSnackbar(context, l.message),

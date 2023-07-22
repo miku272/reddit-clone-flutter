@@ -13,6 +13,7 @@ import '../../../models/post_model.dart';
 
 import '../../../core/utils.dart';
 import '../../../core/providers/storage_repository_provider.dart';
+import '../../../core/enums/enums.dart';
 
 final userProfileControllerProvider =
     StateNotifierProvider<UserProfileController, bool>(
@@ -103,6 +104,19 @@ class UserProfileController extends StateNotifier<bool> {
     );
 
     state = false;
+  }
+
+  Future<void> updateUserKarma(UserKarma userKarma) async {
+    UserModel user = _ref.read(userProvider)!;
+
+    user = user.copyWith(karma: user.karma + userKarma.karma);
+
+    final res = await _userProfileRepository.updateUserKarma(user);
+
+    res.fold(
+      (l) => null,
+      (r) => _ref.read(userProvider.notifier).update((state) => user),
+    );
   }
 
   Stream<List<Post>> getUserPosts(String uid) {

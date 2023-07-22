@@ -52,4 +52,18 @@ class UserProfileRepository {
               .toList(),
         );
   }
+
+  FutureVoid updateUserKarma(UserModel user) async {
+    try {
+      return right(_users.doc(user.uid).update(
+        {
+          'karma': user.karma,
+        },
+      ));
+    } on FirebaseException catch (error) {
+      throw error.message!;
+    } catch (error) {
+      return left(Failure(error.toString()));
+    }
+  }
 }

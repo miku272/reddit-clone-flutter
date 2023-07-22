@@ -4,10 +4,13 @@ enum Thememode {
 }
 
 enum UserKarma {
-  comment,
-  textPost,
-  linkPost,
-  imagePost,
-  awardPost,
-  deletePost,
+  comment(1),
+  textPost(2),
+  linkPost(3),
+  imagePost(3),
+  awardPost(5),
+  deletePost(-1);
+
+  final int karma;
+  const UserKarma(this.karma);
 }
