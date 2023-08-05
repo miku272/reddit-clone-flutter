@@ -256,6 +256,29 @@ class PostController extends StateNotifier<bool> {
     );
   }
 
+  Future<void> awardPost({
+    required BuildContext context,
+    required String award,
+    required Post post,
+  }) async {
+    final user = _ref.read(userProvider)!;
+
+    final res = await _postRepository.awardPost(post, award, user.uid);
+
+    res.fold((l) => showSnackbar(context, l.message), (r) {
+      _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+            UserKarma.awardPost,
+          );
+      _ref.read(userProvider.notifier).update((state) {
+        state?.awards.remove(award);
+
+        return state;
+      });
+
+      Routemaster.of(context).pop();
+    });
+  }
+
   Stream<List<Comment>> getPostComments(String postId) {
     return _postRepository.getPostComments(postId);
   }

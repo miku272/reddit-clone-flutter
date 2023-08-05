@@ -21,6 +21,10 @@ class PostRepository {
   PostRepository({required FirebaseFirestore firestore})
       : _firestore = firestore;
 
+  CollectionReference get _users => _firestore.collection(
+        FirebaseConstants.userCollection,
+      );
+
   CollectionReference get _posts => _firestore.collection(
         FirebaseConstants.postsCollection,
       );
@@ -136,5 +140,25 @@ class PostRepository {
               ),
             )
             .toList());
+  }
+
+  FutureVoid awardPost(Post post, String award, String senderId) async {
+    try {
+      _posts.doc(post.id).update({
+        'awards': FieldValue.arrayUnion([award]),
+      });
+
+      _users.doc(senderId).update({
+        'awards': FieldValue.arrayRemove([award]),
+      });
+
+      return right(_users.doc(post.userId).update({
+        'awards': FieldValue.arrayUnion([award]),
+      }));
+    } on FirebaseException catch (error) {
+      throw error.message!;
+    } catch (error) {
+      return left(Failure(error.toString()));
+    }
   }
 }
