@@ -37,12 +37,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel? user = ref.watch(userProvider);
+    UserModel? user = ref.watch(userProvider)!;
+    final isGuest = !(user.isAuthenticated);
     final currTheme = ref.watch(themeNotifierProvider);
 
     return Scaffold(
       drawer: const CommunityListDrawer(),
-      endDrawer: const ProfileDrawer(),
+      endDrawer: isGuest ? null : const ProfileDrawer(),
       appBar: AppBar(
         title: const Text('Home'),
         centerTitle: false,
@@ -60,31 +61,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             return IconButton(
               onPressed: () => displayEndDrawer(context),
               icon: CircleAvatar(
-                backgroundImage:
-                    user != null ? NetworkImage(user.profilePic) : null,
+                backgroundImage: NetworkImage(user.profilePic),
               ),
             );
           }),
         ],
       ),
       body: Constants.tabWidgets[_page],
-      bottomNavigationBar: CupertinoTabBar(
-        onTap: onPageChange,
-        currentIndex: _page,
-        activeColor: currTheme.iconTheme.color,
-        // ignore: deprecated_member_use
-        backgroundColor: currTheme.backgroundColor,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: '',
-          ),
-        ],
-      ),
+      bottomNavigationBar: isGuest
+          ? null
+          : CupertinoTabBar(
+              onTap: onPageChange,
+              currentIndex: _page,
+              activeColor: currTheme.iconTheme.color,
+              // ignore: deprecated_member_use
+              backgroundColor: currTheme.backgroundColor,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: '',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.add),
+                  label: '',
+                ),
+              ],
+            ),
     );
   }
 }

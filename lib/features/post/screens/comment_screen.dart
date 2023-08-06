@@ -9,6 +9,7 @@ import '../../../models/post_model.dart';
 
 import '../widgets/comment_card.dart';
 
+import '../../auth/controller/auth_controller.dart';
 import '../controllers/post_controller.dart';
 
 class CommentScreen extends ConsumerStatefulWidget {
@@ -44,56 +45,62 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider)!;
+    final isGuest = !(user.isAuthenticated);
+
     return Scaffold(
       appBar: AppBar(),
       body: ref.watch(getPostByIdProvider(widget.postId)).when(
             loading: () => const Loader(),
             error: (error, stacktrace) => ErrorText(error: error.toString()),
             data: (post) {
-              return Column(
-                children: <Widget>[
-                  PostCard(post: post),
-                  const SizedBox(height: 10.0),
-                  TextField(
-                    onSubmitted: (value) {
-                      if (value.trim() == '') {
-                        return;
-                      }
+              return SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    PostCard(post: post),
+                    const SizedBox(height: 10.0),
+                    TextField(
+                      enabled: !isGuest,
+                      onSubmitted: (value) {
+                        if (value.trim() == '') {
+                          return;
+                        }
 
-                      addComment(post);
-                    },
-                    controller: _commentController,
-                    decoration: const InputDecoration(
-                      hintText: 'What are your thoughts?',
-                      filled: true,
-                      border: InputBorder.none,
-                    ),
-                  ),
-                  const SizedBox(height: 10.0),
-                  ref.watch(getPostCommentsProvider(post.id)).when(
-                        loading: () => const Loader(),
-                        error: (error, stacktrace) => ErrorText(
-                          error: error.toString(),
-                        ),
-                        data: (comments) {
-                          if (comments.isEmpty) {
-                            return const Center(
-                              child: Text('No comments...'),
-                            );
-                          }
-
-                          return SingleChildScrollView(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: comments.length,
-                              itemBuilder: (context, index) {
-                                return CommentCard(comment: comments[index]);
-                              },
-                            ),
-                          );
-                        },
+                        addComment(post);
+                      },
+                      controller: _commentController,
+                      decoration: const InputDecoration(
+                        hintText: 'What are your thoughts?',
+                        filled: true,
+                        border: InputBorder.none,
                       ),
-                ],
+                    ),
+                    const SizedBox(height: 10.0),
+                    ref.watch(getPostCommentsProvider(post.id)).when(
+                          loading: () => const Loader(),
+                          error: (error, stacktrace) => ErrorText(
+                            error: error.toString(),
+                          ),
+                          data: (comments) {
+                            if (comments.isEmpty) {
+                              return const Center(
+                                child: Text('No comments...'),
+                              );
+                            }
+
+                            return SingleChildScrollView(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: comments.length,
+                                itemBuilder: (context, index) {
+                                  return CommentCard(comment: comments[index]);
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                  ],
+                ),
               );
             },
           ),

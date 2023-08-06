@@ -60,6 +60,7 @@ class PostCard extends ConsumerWidget {
     final isTypeLink = post.postType == 'link';
 
     final user = ref.watch(userProvider)!;
+    final isGuest = !(user.isAuthenticated);
     final currentTheme = ref.watch(themeNotifierProvider);
 
     return Column(
@@ -141,6 +142,21 @@ class PostCard extends ConsumerWidget {
                                 ),
                             ],
                           ),
+                          if (post.awards.isNotEmpty) ...[
+                            const SizedBox(height: 5),
+                            SizedBox(
+                              height: 25,
+                              child: ListView.builder(
+                                itemCount: post.awards.length,
+                                itemBuilder: (context, index) {
+                                  return Image.asset(
+                                    Constants.awards[post.awards[index]]!,
+                                    height: 23,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                           const SizedBox(height: 10.0),
                           Text(
                             post.title,
@@ -184,7 +200,8 @@ class PostCard extends ConsumerWidget {
                               Row(
                                 children: <Widget>[
                                   IconButton(
-                                    onPressed: () => upvote(ref),
+                                    onPressed:
+                                        isGuest ? null : () => upvote(ref),
                                     icon: Icon(
                                       Constants.up,
                                       color: post.upvotes.contains(user.uid)
@@ -199,7 +216,8 @@ class PostCard extends ConsumerWidget {
                                     ),
                                   ),
                                   IconButton(
-                                    onPressed: () => downvote(ref),
+                                    onPressed:
+                                        isGuest ? null : () => downvote(ref),
                                     icon: Icon(
                                       Constants.down,
                                       color: post.downvotes.contains(user.uid)
@@ -254,34 +272,49 @@ class PostCard extends ConsumerWidget {
                                       return const SizedBox();
                                     },
                                   ),
-                              IconButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => Dialog(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(20.0),
-                                        child: GridView.builder(
-                                          shrinkWrap: true,
-                                          gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 4,
-                                          ),
-                                          itemCount: user.awards.length,
-                                          itemBuilder: (context, index) {
-                                            final award = user.awards[index];
+                              if (post.userId != user.uid)
+                                IconButton(
+                                  onPressed: isGuest
+                                      ? null
+                                      : () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => Dialog(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(20.0),
+                                                child: GridView.builder(
+                                                  shrinkWrap: true,
+                                                  gridDelegate:
+                                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 4,
+                                                  ),
+                                                  itemCount: user.awards.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    final award =
+                                                        user.awards[index];
 
-                                            return Image.asset(
-                                              Constants.awards[award]!,
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.card_giftcard_outlined),
-                              ),
+                                                    return GestureDetector(
+                                                      onTap: () => awardPost(
+                                                        ref,
+                                                        context,
+                                                        award,
+                                                      ),
+                                                      child: Image.asset(
+                                                        Constants
+                                                            .awards[award]!,
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                  icon:
+                                      const Icon(Icons.card_giftcard_outlined),
+                                ),
                             ],
                           ),
                         ],

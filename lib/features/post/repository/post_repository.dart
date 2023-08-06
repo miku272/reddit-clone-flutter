@@ -108,6 +108,18 @@ class PostRepository {
         );
   }
 
+  Stream<List<Post>> fetchGuestPosts() {
+    return _posts
+        .orderBy('createdAt', descending: true)
+        .limit(100)
+        .snapshots()
+        .map(
+          (event) => event.docs
+              .map((e) => Post.fromMap(e.data() as Map<String, dynamic>))
+              .toList(),
+        );
+  }
+
   Stream<Post> getPostById(String postId) {
     return _posts
         .doc(postId)

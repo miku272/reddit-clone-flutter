@@ -37,7 +37,8 @@ class CommunityScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String? uid = ref.watch(userProvider)?.uid;
+    final user = ref.watch(userProvider)!;
+    final isGuest = !(user.isAuthenticated);
 
     return Scaffold(
       body: ref.watch(getCommunityByNameProvider(name)).when(
@@ -83,32 +84,33 @@ class CommunityScreen extends ConsumerWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                OutlinedButton(
-                                  onPressed: community.mods.contains(uid)
-                                      ? () => navigateToModTools(context)
-                                      : () async {
-                                          await joinOrLeaveCommunity(
-                                            ref,
-                                            context,
-                                            community,
-                                          );
-                                        },
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 25.0,
+                                if (!isGuest)
+                                  OutlinedButton(
+                                    onPressed: community.mods.contains(user.uid)
+                                        ? () => navigateToModTools(context)
+                                        : () async {
+                                            await joinOrLeaveCommunity(
+                                              ref,
+                                              context,
+                                              community,
+                                            );
+                                          },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 25.0,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
                                     ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                    child: Text(
+                                      community.mods.contains(user.uid)
+                                          ? 'Mod tools'
+                                          : community.members.contains(user.uid)
+                                              ? 'Joined'
+                                              : 'Join',
                                     ),
                                   ),
-                                  child: Text(
-                                    community.mods.contains(uid)
-                                        ? 'Mod tools'
-                                        : community.members.contains(uid)
-                                            ? 'Joined'
-                                            : 'Join',
-                                  ),
-                                ),
                               ],
                             ),
                             Padding(
