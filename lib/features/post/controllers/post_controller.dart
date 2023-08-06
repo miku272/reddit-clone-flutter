@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -153,6 +154,7 @@ class PostController extends StateNotifier<bool> {
     required String title,
     required Community selectedCommunity,
     required File? file,
+    required Uint8List? webFile,
   }) async {
     state = true;
 
@@ -162,6 +164,7 @@ class PostController extends StateNotifier<bool> {
       path: '/posts/${selectedCommunity.name}',
       id: postId,
       file: file,
+      webFile: webFile,
     );
 
     imageRes.fold((l) => showSnackbar(context, l.message), (r) async {

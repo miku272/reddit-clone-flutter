@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:routemaster/routemaster.dart';
 
 import '../../../theme/pallete.dart';
 
@@ -35,6 +37,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
+  void navigateToAddPostScreen() {
+    Routemaster.of(context).push('/add-post');
+  }
+
   @override
   Widget build(BuildContext context) {
     UserModel? user = ref.watch(userProvider)!;
@@ -57,6 +63,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             },
             icon: const Icon(Icons.search),
           ),
+          if (kIsWeb && !isGuest)
+            IconButton(
+              onPressed: navigateToAddPostScreen,
+              icon: const Icon(Icons.add),
+            ),
           Builder(builder: (context) {
             return IconButton(
               onPressed: () => displayEndDrawer(context),
@@ -68,7 +79,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
       body: Constants.tabWidgets[_page],
-      bottomNavigationBar: isGuest
+      bottomNavigationBar: isGuest || kIsWeb
           ? null
           : CupertinoTabBar(
               onTap: onPageChange,

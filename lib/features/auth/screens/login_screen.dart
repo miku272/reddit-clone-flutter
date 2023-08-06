@@ -8,6 +8,8 @@ import '../../../core/common/loader.dart';
 
 import '../controller/auth_controller.dart';
 
+import '../../../responsive/responsive.dart';
+
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
 
@@ -61,7 +63,7 @@ class LoginScreen extends ConsumerWidget {
                 const SizedBox(height: 20),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: SignInButton(),
+                  child: Responsive(child: SignInButton()),
                 ),
               ],
             ),

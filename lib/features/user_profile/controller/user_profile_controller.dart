@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -53,7 +54,9 @@ class UserProfileController extends StateNotifier<bool> {
   Future<void> editProfile({
     required BuildContext context,
     required File? profileFile,
+    required Uint8List? profileWebFile,
     required File? bannerFile,
+    required Uint8List? bannerWebFile,
     required String name,
   }) async {
     state = true;
@@ -64,11 +67,12 @@ class UserProfileController extends StateNotifier<bool> {
       return;
     }
 
-    if (profileFile != null) {
+    if (profileFile != null || profileWebFile != null) {
       final result = await _storageRepository.storeFile(
         path: 'users/profile',
         id: user.uid,
         file: profileFile,
+        webFile: profileWebFile,
       );
 
       result.fold(
@@ -77,11 +81,12 @@ class UserProfileController extends StateNotifier<bool> {
       );
     }
 
-    if (bannerFile != null) {
+    if (bannerFile != null || bannerWebFile != null) {
       final result = await _storageRepository.storeFile(
         path: 'users/banner',
         id: user!.uid,
         file: bannerFile,
+        webFile: bannerWebFile,
       );
 
       result.fold(

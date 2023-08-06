@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -23,7 +24,9 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   File? bannerFile;
+  Uint8List? bannerWebFile;
   File? profileFile;
+  Uint8List? profileWebFile;
 
   late TextEditingController nameController;
 
@@ -42,9 +45,15 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final result = await pickImage();
 
     if (result != null) {
-      setState(() {
-        bannerFile = File(result.files.first.path!);
-      });
+      if (kIsWeb) {
+        setState(() {
+          bannerWebFile = result.files.first.bytes;
+        });
+      } else {
+        setState(() {
+          bannerFile = File(result.files.first.path!);
+        });
+      }
     }
   }
 
@@ -52,9 +61,15 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final result = await pickImage();
 
     if (result != null) {
-      setState(() {
-        profileFile = File(result.files.first.path!);
-      });
+      if (kIsWeb) {
+        setState(() {
+          profileWebFile = result.files.first.bytes;
+        });
+      } else {
+        setState(() {
+          profileFile = File(result.files.first.path!);
+        });
+      }
     }
   }
 
@@ -62,7 +77,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     await ref.read(userProfileControllerProvider.notifier).editProfile(
           context: context,
           profileFile: profileFile,
+          profileWebFile: profileWebFile,
           bannerFile: bannerFile,
+          bannerWebFile: bannerWebFile,
           name: nameController.text.trim(),
         );
   }

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:any_link_preview/any_link_preview.dart';
 
+import '../../responsive/responsive.dart';
+
 import './loader.dart';
 import 'error_text.dart';
 import '../constants/constants.dart';
@@ -63,270 +65,275 @@ class PostCard extends ConsumerWidget {
     final isGuest = !(user.isAuthenticated);
     final currentTheme = ref.watch(themeNotifierProvider);
 
-    return Column(
-      children: <Widget>[
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
-          decoration: BoxDecoration(
-            color: currentTheme.drawerTheme.backgroundColor,
-          ),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 4.0,
-                        horizontal: 16.0,
-                      ).copyWith(right: 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  GestureDetector(
-                                    onTap: () => navigateToCommunity(context),
-                                    child: CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                        post.communityProfilePic,
+    return Responsive(
+      child: Column(
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            decoration: BoxDecoration(
+              color: currentTheme.drawerTheme.backgroundColor,
+            ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 4.0,
+                          horizontal: 16.0,
+                        ).copyWith(right: 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    GestureDetector(
+                                      onTap: () => navigateToCommunity(context),
+                                      child: CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                          post.communityProfilePic,
+                                        ),
+                                        radius: 16.0,
                                       ),
-                                      radius: 16.0,
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 15.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        GestureDetector(
-                                          onTap: () =>
-                                              navigateToCommunity(context),
-                                          child: Text(
-                                            'r/${post.communityName}',
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 15.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          GestureDetector(
+                                            onTap: () =>
+                                                navigateToCommunity(context),
+                                            child: Text(
+                                              'r/${post.communityName}',
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () =>
-                                              navigateToUserProfile(context),
-                                          child: Text(
-                                            'u/${post.userName}',
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
+                                          GestureDetector(
+                                            onTap: () =>
+                                                navigateToUserProfile(context),
+                                            child: Text(
+                                              'u/${post.userName}',
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              if (post.userId == user.uid)
-                                IconButton(
-                                  onPressed: () async {
-                                    await deletePost(ref, context);
-                                  },
-                                  icon: Icon(
-                                    Icons.delete,
-                                    color: Pallete.redColor,
-                                  ),
+                                  ],
                                 ),
+                                if (post.userId == user.uid)
+                                  IconButton(
+                                    onPressed: () async {
+                                      await deletePost(ref, context);
+                                    },
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: Pallete.redColor,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            if (post.awards.isNotEmpty) ...[
+                              const SizedBox(height: 5),
+                              SizedBox(
+                                height: 25,
+                                child: ListView.builder(
+                                  itemCount: post.awards.length,
+                                  itemBuilder: (context, index) {
+                                    return Image.asset(
+                                      Constants.awards[post.awards[index]]!,
+                                      height: 23,
+                                    );
+                                  },
+                                ),
+                              ),
                             ],
-                          ),
-                          if (post.awards.isNotEmpty) ...[
-                            const SizedBox(height: 5),
-                            SizedBox(
-                              height: 25,
-                              child: ListView.builder(
-                                itemCount: post.awards.length,
-                                itemBuilder: (context, index) {
-                                  return Image.asset(
-                                    Constants.awards[post.awards[index]]!,
-                                    height: 23,
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                          const SizedBox(height: 10.0),
-                          Text(
-                            post.title,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10.0),
-                          if (isTypeImage)
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.35,
-                              width: double.infinity,
-                              child: Image.network(
-                                post.link!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          if (isTypeLink)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                              ),
-                              child: AnyLinkPreview(
-                                link: post.link!,
-                                displayDirection:
-                                    UIDirection.uiDirectionHorizontal,
-                              ),
-                            ),
-                          if (isTypeText)
+                            const SizedBox(height: 10.0),
                             Text(
-                              post.description!,
+                              post.title,
                               style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  IconButton(
-                                    onPressed:
-                                        isGuest ? null : () => upvote(ref),
-                                    icon: Icon(
-                                      Constants.up,
-                                      color: post.upvotes.contains(user.uid)
-                                          ? Pallete.redColor
-                                          : null,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${post.upvotes.length - post.downvotes.length == 0 ? 'Vote' : post.upvotes.length - post.downvotes.length}',
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed:
-                                        isGuest ? null : () => downvote(ref),
-                                    icon: Icon(
-                                      Constants.down,
-                                      color: post.downvotes.contains(user.uid)
-                                          ? Pallete.blueColor
-                                          : null,
-                                    ),
-                                  ),
-                                ],
+                            const SizedBox(height: 10.0),
+                            if (isTypeImage)
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.35,
+                                width: double.infinity,
+                                child: Image.network(
+                                  post.link!,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                              Row(
-                                children: <Widget>[
-                                  IconButton(
-                                    onPressed: () =>
-                                        navigateToComments(context),
-                                    icon: const Icon(Icons.comment),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () => navigateToComments(context),
-                                    child: Text(
-                                      '${post.commentCount == 0 ? 'Comment' : post.commentCount}',
+                            if (isTypeLink)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0,
+                                ),
+                                child: AnyLinkPreview(
+                                  link: post.link!,
+                                  displayDirection:
+                                      UIDirection.uiDirectionHorizontal,
+                                ),
+                              ),
+                            if (isTypeText)
+                              Text(
+                                post.description!,
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    IconButton(
+                                      onPressed:
+                                          isGuest ? null : () => upvote(ref),
+                                      icon: Icon(
+                                        Constants.up,
+                                        color: post.upvotes.contains(user.uid)
+                                            ? Pallete.redColor
+                                            : null,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${post.upvotes.length - post.downvotes.length == 0 ? 'Vote' : post.upvotes.length - post.downvotes.length}',
                                       style: const TextStyle(
                                         fontSize: 15,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              ref
-                                  .watch(
-                                    getCommunityByNameProvider(
-                                      post.communityName,
+                                    IconButton(
+                                      onPressed:
+                                          isGuest ? null : () => downvote(ref),
+                                      icon: Icon(
+                                        Constants.down,
+                                        color: post.downvotes.contains(user.uid)
+                                            ? Pallete.blueColor
+                                            : null,
+                                      ),
                                     ),
-                                  )
-                                  .when(
-                                    loading: () => const Loader(),
-                                    error: (error, stacktrace) => ErrorText(
-                                      error: error.toString(),
+                                  ],
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    IconButton(
+                                      onPressed: () =>
+                                          navigateToComments(context),
+                                      icon: const Icon(Icons.comment),
                                     ),
-                                    data: (community) {
-                                      if (community.mods.contains(user.uid)) {
-                                        return IconButton(
-                                          onPressed: () => deletePost(
-                                            ref,
-                                            context,
-                                          ),
-                                          icon: const Icon(
-                                            Icons.admin_panel_settings,
-                                          ),
-                                        );
-                                      }
-
-                                      return const SizedBox();
-                                    },
-                                  ),
-                              if (post.userId != user.uid)
-                                IconButton(
-                                  onPressed: isGuest
-                                      ? null
-                                      : () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => Dialog(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(20.0),
-                                                child: GridView.builder(
-                                                  shrinkWrap: true,
-                                                  gridDelegate:
-                                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 4,
-                                                  ),
-                                                  itemCount: user.awards.length,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    final award =
-                                                        user.awards[index];
-
-                                                    return GestureDetector(
-                                                      onTap: () => awardPost(
-                                                        ref,
-                                                        context,
-                                                        award,
-                                                      ),
-                                                      child: Image.asset(
-                                                        Constants
-                                                            .awards[award]!,
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
+                                    GestureDetector(
+                                      onTap: () => navigateToComments(context),
+                                      child: Text(
+                                        '${post.commentCount == 0 ? 'Comment' : post.commentCount}',
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                ref
+                                    .watch(
+                                      getCommunityByNameProvider(
+                                        post.communityName,
+                                      ),
+                                    )
+                                    .when(
+                                      loading: () => const Loader(),
+                                      error: (error, stacktrace) => ErrorText(
+                                        error: error.toString(),
+                                      ),
+                                      data: (community) {
+                                        if (community.mods.contains(user.uid)) {
+                                          return IconButton(
+                                            onPressed: () => deletePost(
+                                              ref,
+                                              context,
+                                            ),
+                                            icon: const Icon(
+                                              Icons.admin_panel_settings,
                                             ),
                                           );
-                                        },
-                                  icon:
-                                      const Icon(Icons.card_giftcard_outlined),
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                                        }
+
+                                        return const SizedBox();
+                                      },
+                                    ),
+                                if (post.userId != user.uid)
+                                  IconButton(
+                                    onPressed: isGuest
+                                        ? null
+                                        : () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => Dialog(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      20.0),
+                                                  child: GridView.builder(
+                                                    shrinkWrap: true,
+                                                    gridDelegate:
+                                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                                      crossAxisCount: 4,
+                                                    ),
+                                                    itemCount:
+                                                        user.awards.length,
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      final award =
+                                                          user.awards[index];
+
+                                                      return GestureDetector(
+                                                        onTap: () => awardPost(
+                                                          ref,
+                                                          context,
+                                                          award,
+                                                        ),
+                                                        child: Image.asset(
+                                                          Constants
+                                                              .awards[award]!,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                    icon: const Icon(
+                                        Icons.card_giftcard_outlined),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

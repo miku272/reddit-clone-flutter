@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -130,15 +131,18 @@ class CommunityController extends StateNotifier<bool> {
     required BuildContext context,
     required Community community,
     required File? profileFile,
+    required Uint8List? profileWebFile,
     required File? bannerFile,
+    required Uint8List? bannerWebFile,
   }) async {
     state = true;
 
-    if (profileFile != null) {
+    if (profileFile != null || profileWebFile != null) {
       final result = await _storageRepository.storeFile(
         path: 'communities/profile',
         id: community.name,
         file: profileFile,
+        webFile: profileWebFile,
       );
 
       result.fold(
@@ -147,11 +151,12 @@ class CommunityController extends StateNotifier<bool> {
       );
     }
 
-    if (bannerFile != null) {
+    if (bannerFile != null || bannerWebFile != null) {
       final result = await _storageRepository.storeFile(
         path: 'communities/banner',
         id: community.name,
         file: bannerFile,
+        webFile: bannerWebFile,
       );
 
       result.fold(
